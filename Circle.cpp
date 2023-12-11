@@ -13,9 +13,9 @@ void Anim_circle(float radius) {
 		ImVec2 lastPos(pos.x + cos(angle) * radius, pos.y + sin(angle) * radius);
 		ImVec2 nextPos(pos.x + cos(angle + 2 * M_PI / sides) * radius, pos.y + sin(angle + 2 * M_PI / sides) * radius);
 
-		drawList->AddLine(lastPos, nextPos, IM_COL32(0, 0, 0, 255), 4.f);//outline
+		drawList->AddLine(lastPos, nextPos, IM_COL32(0, 0, 0, 255), 4.f);//outline | очертание
 
-		drawList->AddLine(lastPos, nextPos, currentColor, 2.f); //main
+		drawList->AddLine(lastPos, nextPos, currentColor, 2.f); //main | главный
 	}
 }
 
