@@ -1,3 +1,5 @@
+#define M_PI 3.14159265358979323846
+
 void Anim_circle(float radius) {
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 center(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
