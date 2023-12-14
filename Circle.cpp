@@ -1,26 +1,33 @@
 #define M_PI 3.14159265358979323846
 
-void Anim_circle(float radius) {
-    ImGuiIO& io = ImGui::GetIO();
-    ImVec2 center(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
-    ImDrawList* drawList = ImGui::GetForegroundDrawList(); // change this to GetBackgroundDrawlist to make it behind the menu
-     //  измените это на GetBackgroundDrawlist чтобы поместить его за меню
+static float radius = 200.f;
+static bool fill = false;
+static bool Rainbow = false;
 
-    float timeFactor = fmod(ImGui::GetTime(), 5.0f) / 5.0f;
+void Anim_circle(float r, bool filled, bool rainbow) {
+	auto& io = ImGui::GetIO();
+	auto center = ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
+	auto drawList = ImGui::GetBackgroundDrawList();
 
-    for (int i = 0; i < sides; ++i) {
-        ImVec2 pos(center.x, center.y);
-        ImU32 currentColor = ImGui::ColorConvertFloat4ToU32(ImColor::HSV((timeFactor - i / static_cast<float>(sides)) + 1.0f, 0.5f, 1.0f));
+	for (int i = 0; i < sides; ++i) {
+		auto pos = center;
+		float angle = (i / static_cast<float>(sides)) * 2 * M_PI;
+		auto lastPos = ImVec2(pos.x + cos(angle) * r, pos.y + sin(angle) * r);
+		auto nextPos = ImVec2(pos.x + cos(angle + 2 * M_PI / sides) * r, pos.y + sin(angle + 2 * M_PI / sides) * r);
 
-        float angle = (i / static_cast<float>(sides)) * 2 * M_PI;
-        ImVec2 lastPos(pos.x + cos(angle) * radius, pos.y + sin(angle) * radius);
-        ImVec2 nextPos(pos.x + cos(angle + 2 * M_PI / sides) * radius, pos.y + sin(angle + 2 * M_PI / sides) * radius);
+		ImU32 currentColor = rainbow ? ImGui::ColorConvertFloat4ToU32(ImColor::HSV((fmod(ImGui::GetTime(), 5.0f) / 5.0f - i / static_cast<float>(sides)) + 1.0f, 0.5f, 1.0f)): IM_COL32(255, 255, 255, 255);
 
-        drawList->AddLine(lastPos, nextPos, IM_COL32(0, 0, 0, 255), 4.f);//outline | очертание
+		ImU32 fillCol = filled ? ImGui::ColorConvertFloat4ToU32({ ImGui::ColorConvertU32ToFloat4(currentColor).x, ImGui::ColorConvertU32ToFloat4(currentColor).y, ImGui::ColorConvertU32ToFloat4(currentColor).z, 0.2f }): 0; // 0.2f = fill opacity
 
-        drawList->AddLine(lastPos, nextPos, currentColor, 2.f); //main | главный
-    }
+		if (filled) {
+			ImVec2 triangle[3] = { lastPos, nextPos, center };
+			drawList->AddConvexPolyFilled(triangle, 3, fillCol); // fill
+		}
+
+		drawList->AddLine(lastPos, nextPos, IM_COL32(0, 0, 0, 255), 4.f); // outline | очертание
+		drawList->AddLine(lastPos, nextPos, currentColor, 2.f); // main | главный
+	}
 }
 
 //example | пример
-Anim_circle(90.f);
+Anim_circle(radius, fill, Rainbow);
