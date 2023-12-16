@@ -3,10 +3,12 @@
 static float radius = 200.f;
 static bool fill = false;
 static bool Rainbow = false;
+static bool toMouse = false;
 
-void Anim_circle(float r, bool filled, bool rainbow) {
+void Anim_circle(float r, bool filled, bool rainbow, bool toMouse) {
 	auto& io = ImGui::GetIO();
-	auto center = ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
+
+	ImVec2 center = toMouse ? ImVec2(io.MousePos.x, io.MousePos.y) : ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
 	auto drawList = ImGui::GetBackgroundDrawList();
 
 	for (int i = 0; i < sides; ++i) {
@@ -30,4 +32,5 @@ void Anim_circle(float r, bool filled, bool rainbow) {
 }
 
 //example | пример
-Anim_circle(radius, fill, Rainbow);
+Anim_circle(radius, fill, Rainbow, toMouse);
+Anim_circle(200.f, false, false, false);
